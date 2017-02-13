@@ -3,7 +3,7 @@
 namespace Drupal\auto_entitylabel\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -12,17 +12,17 @@ class AutoEntityLabelConfigTask extends DeriverBase implements ContainerDeriverI
   /**
    * The entity manager
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityManager;
 
   /**
    * Creates an FieldUiLocalTask object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_manager) {
     $this->entityManager = $entity_manager;
   }
 
@@ -42,13 +42,14 @@ class AutoEntityLabelConfigTask extends DeriverBase implements ContainerDeriverI
     $this->derivatives = array();
 
     foreach ($this->entityManager->getDefinitions() as $entity_type_id => $entity_type) {
-
-      $this->derivatives["$entity_type_id.auto_label_tab"] = array(
-        'route_name' => "entity.{$entity_type_id}.auto_label",
-        'title' => 'Auto Label',
-        'base_route' => "entity.{$entity_type_id}.edit_form",
-        'weight' => 100,
-      );
+      if ($entity_type->hasLinkTemplate('auto-label')) {
+        $this->derivatives["$entity_type_id.auto_label_tab"] = array(
+          'route_name' => "entity.{$entity_type_id}.auto_label",
+          'title' => 'Automatic label',
+          'base_route' => "entity.{$entity_type_id}.edit_form",
+          'weight' => 100,
+        );
+      }
     }
 
     foreach ($this->derivatives as &$entry) {
