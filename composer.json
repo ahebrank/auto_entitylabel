@@ -1,5 +1,5 @@
 {
-  "name": "drupal/auto_entitylabel",
+  "name": "ahebrank/auto_entitylabel",
   "description": "Allows hiding of entity label fields and automatic label creation.",
   "type": "drupal-module",
   "license": "GPL-2.0+",
